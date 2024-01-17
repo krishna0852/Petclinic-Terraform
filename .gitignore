@@ -7,3 +7,6 @@ provider.tf
 
 #Ignote terraform hidden files
 *.terraform*
+
+#ignoring terraform state backup file 
+terraform*
