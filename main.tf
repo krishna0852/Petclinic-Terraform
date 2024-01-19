@@ -31,6 +31,16 @@ prvtsbnt-config = {
 module "ECS" {
     source="./modules/petclinic.terraform.ECS"
     cluster_name = "dev-petclinic-cluster"
+    family-name = "petclinic-web"
+    iamrole = "ecs-execution-role"
+    #ecs-execution-role
+    vpc-id = module.vpc.getvpc-id
+    depends_on = [ module.vpc, module.subnet, module.IAM] # don't change this line
+}
+
+module "IAM" {
+  source="./modules/petclinic.terraform.IAM"
+  #depends_on = [ module.ECS ]
 }
 
 # module "EC2" {
