@@ -28,20 +28,48 @@ prvtsbnt-config = {
 
 }
 
-module "ECS" {
-    source="./modules/petclinic.terraform.ECS"
-    cluster_name = "dev-petclinic-cluster"
-    family-name = "petclinic-web"
-    iamrole = "ecs-execution-role"
-    #ecs-execution-role
-    vpc-id = module.vpc.getvpc-id
-    depends_on = [ module.vpc, module.subnet, module.IAM] # don't change this line
+module "alb" {
+  source = "./modules/petclinic.terraform.LOADBALANCER"
+  lb-name = "petclinic-lb"
+  lb-type = "application"
+  vpc-id = module.vpc.getvpc-id
+  sgid = module.subnet.security-id
+  depends_on = [ module.vpc, module.subnet ]
 }
 
 module "IAM" {
   source="./modules/petclinic.terraform.IAM"
   #depends_on = [ module.ECS ]
 }
+
+module "ECS" {
+    source="./modules/petclinic.terraform.ECS"
+    cluster_name = "dev-petclinic-cluster"
+    family-name = "petclinic-web"
+    iamrole = "ecs-execution-role"
+    #ecs-execution-role
+    sgid = module.subnet.security-id
+    vpc-id = module.vpc.getvpc-id
+    tgroup_arn = module.alb.tgroup_arn
+    depends_on = [ module.vpc, module.subnet, module.IAM, module.alb] # don't change this line
+}
+
+
+module "ECR" {
+  source="./modules/petclinic.terraform.ECR"
+  ecr-name = ["repo"]
+
+  tags={
+    "environment" ="dev"
+  }
+
+  
+}
+
+
+
+
+
 
 # module "EC2" {
 #   source="./modules/petclinic.terraform.EC2"

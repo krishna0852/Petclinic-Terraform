@@ -95,3 +95,22 @@ resource "aws_route_table_association" "prvt-association" {
   subnet_id      = element([for subnet in aws_subnet.private-subnets : subnet.id],0)
   route_table_id = element([for rtble in aws_route_table.prvt-route : rtble.id], 0)
 }
+
+resource "aws_security_group" "ecs-sg" {
+  name="ecs-sg"
+  vpc_id = var.vpc-id
+  ingress {
+      description = "inbound-traffic"
+      from_port = "80"
+      to_port = "80"
+      protocol = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress{
+      description = "outbound-traffic"
+      from_port = "0"
+      to_port= "0"
+      protocol = "-1" 
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}

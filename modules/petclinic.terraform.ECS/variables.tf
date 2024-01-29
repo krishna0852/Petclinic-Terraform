@@ -36,3 +36,12 @@ variable "iamrole" {
   description = "iam-role-name"
 }
 
+variable "sgid" {
+  type=string 
+  description = "security group-id"
+}
+
+variable "tgroup_arn" {
+  type=string 
+  description = "target-group"
+}
