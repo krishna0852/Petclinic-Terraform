@@ -13,10 +13,10 @@ variable "record-type" {
   description="give the record type"  
 }
 
-variable "ttl"{
-    type=number
-    description = "give the ttl"
-}
+# variable "ttl"{
+#     type=number
+#     description = "give the ttl"
+# }
 
 variable "app-name" {
    type=string 

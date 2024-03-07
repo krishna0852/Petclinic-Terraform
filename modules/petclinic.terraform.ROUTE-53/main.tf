@@ -10,7 +10,7 @@ resource "aws_route53_record" "dev-ns" {
   zone_id = aws_route53_zone.dev.zone_id
   name    = var.app-name
   type    = var.record-type
-  ttl     = "300"
+ # ttl     = var.ttl
   
   alias{
       name                   =var.alb-name

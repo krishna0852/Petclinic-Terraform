@@ -70,11 +70,10 @@ module "r-53" {
   hosted-zone-name="devopshandson3.cloud"
   environment="dev"
   record-type="A"
- # ttl="300"
   app-name = "petapp-dev"
   alb-name=module.alb.alb-dns
   alb_zoneid = module.alb.zoneid
-
+ # ttl = 300
 }
 
 # ECR PENDING 
