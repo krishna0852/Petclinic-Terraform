@@ -1,1 +1,1 @@
-#vpc_cidr_range=""
+# vpc_cidr_range= "192.75.13/24"

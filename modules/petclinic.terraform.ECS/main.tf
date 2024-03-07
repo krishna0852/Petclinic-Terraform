@@ -96,7 +96,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
   #depends_on = [ aws_ecs_cluster.cluster ]
 }
 
-resource "aws_appautoscaling_policy" "scalue-up" {
+resource "aws_appautoscaling_policy" "scale-up" {
   name               = "scale-up"
   policy_type        = "StepScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
@@ -153,7 +153,7 @@ statistic = "Average"
 threshold = 60
 //ARN of the policy
 alarm_actions = [
-aws_appautoscaling_policy.scalue-up.arn
+aws_appautoscaling_policy.scale-up.arn
 ]
 dimensions = {
 "ClusterName" = aws_ecs_cluster.cluster.name

@@ -1,6 +1,7 @@
 module "vpc" {
   source = "./modules/petclinic.terraform.VPC"
-   vpc_cidr_range = "10.9.0.0/24"
+  vpc_cidr_range = "10.9.0.0/24"
+
 }
 
 module "subnet" {
@@ -62,9 +63,27 @@ module "ECR" {
   tags={
     "environment" ="dev"
   }
-
-  
 }
+
+module "r-53" {
+  source="./modules/petclinic.terraform.ROUTE-53"
+  hosted-zone-name="devopshandson3.cloud"
+  environment="dev"
+  record-type="A"
+ # ttl="300"
+  app-name = "petapp-dev"
+  alb-name=module.alb.alb-dns
+  alb_zoneid = module.alb.zoneid
+
+}
+
+# ECR PENDING 
+# ROUTE-53 PENDING 
+# CLOUD-FRONT-PENDING 
+
+#PROPER VARIBALIZATION PENDING 
+
+#PASS THIS FILE VALUES ALSO THROUGH VARIABLES 
 
 
 

@@ -1,6 +1,6 @@
 #Ignore provider.tf file 
 
-provider.tf 
+#provider.tf 
 
 #Ignore terraform state file 
 *.tfstate
