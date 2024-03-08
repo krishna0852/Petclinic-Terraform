@@ -11,27 +11,27 @@ resource "aws_ecr_repository" "foo" {
 }
 
 
-resource "aws_ecr_lifecycle_policy" "foopolicy" {
-  for_each = toset(var.ecr-name)
-  repository = each.key
+# resource "aws_ecr_lifecycle_policy" "foopolicy" {
+#   for_each = toset(var.ecr-name)
+#   repository = each.key
 
-  policy = <<EOF
-{
-    "rules": [
-        {
-            "rulePriority": 1,
-            "description": "keep last 5 images",
-            "selection": {
-                "tagStatus": "tagged",
-                "tagPrefixList": ["v"], 
-                "countType": "imageCountMoreThan",
-                "countNumber": 5
-            },
-            "action": {
-                "type": "expire"
-            }
-        }
-    ]
-}
-EOF
-}
+#   policy = <<EOF
+# {
+#     "rules": [
+#         {
+#             "rulePriority": 1,
+#             "description": "keep last 5 images",
+#             "selection": {
+#                 "tagStatus": "tagged",
+#                 "tagPrefixList": ["v"], 
+#                 "countType": "imageCountMoreThan",
+#                 "countNumber": 5
+#             },
+#             "action": {
+#                 "type": "expire"
+#             }
+#         }
+#     ]
+# }
+# EOF
+# }
