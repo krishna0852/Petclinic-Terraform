@@ -1,0 +1,6 @@
+dev:
+  accountid: 12345768890
+test:
+  accountid: 12346789
+prod:
+  accountid: 143678902
