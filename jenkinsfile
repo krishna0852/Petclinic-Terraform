@@ -1,0 +1,212 @@
+//def proUrl = 'https://krishna0852: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@github.com/krishna0852/Petclinic-Terraform.git'
+def repoName = "krishna0852/Petclinic-Terraform.git"
+def protocol = "https://"
+def credentialsid= 'tokencreds'
+def proUrl = protocol +"krishna0852:" + getTokenCredentials(credentialsid) + "@github.com/" + repoName
+
+//def data=getTokenCredentials(credentialsid)
+
+echo "${proUrl}"
+
+def getTokenCredentials(credentialsId){
+    withCredentials([string(credentialsId: credentialsId, variable: 'token')]) {
+       return token
+}
+}
+
+def getGitBranches(String proUrl) {
+    echo "$proUrl"
+    def gitBranches = sh(script: "git ls-remote --heads ${proUrl}", returnStdout: true).trim()
+    def masterBranch = gitBranches.replaceAll(/.*refs\/heads\/(\S+).*/, '$1')
+   // echo "$masterBranch"
+   // echo "writing error"
+    //params.SELECT_BRANCH_TO_DEPLOY = masterBranch
+    branches=masterBranch
+    //echo "listing branches into branches-variable"
+   // echo "$branches"
+    return branches
+}
+
+node {
+    branches=getGitBranches(proUrl)
+}
+
+pipeline {
+    agent any 
+
+    
+    /*environment{
+        ACCESS_KEY=credentials('ACCESS_KEY')
+        SECRET_KEY= credentials('SECRET_KEY')
+    }*/
+
+
+    parameters {
+        choice(name: 'selectedbranch', choices: branches, description: 'APP-ENV-TO-DEPLOY')
+        choice(name: 'terraform', choices: ['Apply','Destroy'], description: 'Terraform Action')
+        booleanParam(name: 'confirm', defaultValue: false, description: 'userconfirm')
+
+    }
+
+    
+
+    stages {
+
+        stage('pre-validation'){
+            
+            steps{
+                 script{
+                     echo 'entered pre-validation-script'
+                    if(params.confirm==false)
+                    {
+                      error("user didn't check the confirm boolean parameter")
+                    }
+                    if(params.selectedbranch==''){
+                        error('No branches to deploy')
+                    }
+                }
+                 
+            }
+        }
+
+        stage('approval for branch-deployment'){
+            steps{
+
+                script {
+                    
+                   echo "entered into script"
+                   def USER_INPUT = input(
+                    message: "Are you sure you want to deploy in ${params.selectedbranch} branch, Do you confirm?",
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: [params.selectedbranch].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ])
+                
+                }
+
+                      
+            }
+        }
+
+        stage("checkout") {
+            steps {
+               checkout scmGit(branches: [[name: selectedbranch]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/krishna0852/Petclinic-Terraform.git']])   
+            }
+        }
+        
+    //     stage("compile-java") {
+    //         steps {
+    //             sh 'javac hello.java' 
+    //             sh 'java hello.java'
+               
+    //         }
+    //     }
+    
+          stage("Terraform-init") {
+
+            steps{
+             
+                 sh 'terraform init'
+             }
+
+          }
+
+          stage("Terraform-validate") {
+
+            steps{
+                
+               sh 'terraform validate'
+            }
+
+          }
+
+          stage("Terraform-plan") {
+
+            steps{
+                
+                sh 'terraform plan'
+            }
+
+          }
+
+          stage("Approval for terraform-APPLY/ terraformDestroy") {
+            steps {
+               
+                echo 'before entering the script'
+                
+                script {
+                    
+                   echo "entered into script"
+                   def USER_INPUT = input(
+                    message: "Are you sure you want to perform action terraform ${params.terraform} in ${params.selectedbranch} branch, Do you confirm?",
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: [params.terraform].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ],
+                    submitter: "approval" // you can pass the specific jenkins user names
+
+                    )
+
+                    
+                    if ("${USER_INPUT}"=="Apply") {
+                        
+                        //calling terraform apply
+                        terraformApply()
+                        // Add your actions here
+                    } 
+                    
+                    else if("${USER_INPUT}"=="Destroy"){
+                        //calling terraform destroy
+                        terraformDestroy()
+                    }
+
+                    // else {
+                    //     echo "User declined the terraform ${USER_INPUT} approval"
+                    //     currentBuild.result = 'ABORTED'
+                    //     error('Pipeline aborted by user')
+                    // }
+                }
+            }
+        }
+
+
+         
+          stage("Configuration-plan") {
+
+            steps{
+                echo "hello"
+            }
+
+          }
+   
+    }
+
+
+post{
+       success{
+                echo "will execute when it's success"
+        }
+
+        failure{
+                echo "will execute when it's fail"
+        }
+  }
+
+}
+
+def terraformApply(){
+    echo "Applying terraform ...."
+    sh 'terraform apply --auto-approve'
+    //terraform apply --auto-approve
+}
+
+def terraformDestroy(){
+    echo "Destroying terraform ...."
+
+    sh 'terraform destroy --auto-approve'
+    //terraform destroy --auto-approve
+}
