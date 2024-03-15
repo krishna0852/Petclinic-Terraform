@@ -1,9 +1,15 @@
 dev:
   accountid: 12345768890
   region:
+  statefileBucket: dev-statefile
+  dynamodblock: dev-dynamodb
 test:
   accountid: 12346789
   region:
+  statefileBucket: test-statefile
+  dynamodblock: test-dynamodb
 prod:
   accountid: 143678902
   region: 
+  statefileBucket: prod-statefile
+  dynamodblock: prod-statefile
