@@ -1,5 +1,5 @@
 //def proUrl = 'https://krishna0852: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@github.com/krishna0852/Petclinic-Terraform.git'
-def repoName = "krishna0852/Petclinic-Terraform.git"
+def repoName = "krishna0852/testing.git"
 def protocol = "https://"
 def credentialsid= 'tokencreds'
 def proUrl = protocol +"krishna0852:" + getTokenCredentials(credentialsid) + "@github.com/" + repoName
@@ -31,15 +31,10 @@ node {
     branches=getGitBranches(proUrl)
 }
 
-pipeline {
-    agent any 
 
-    
-    /*environment{
-        ACCESS_KEY=credentials('ACCESS_KEY')
-        SECRET_KEY= credentials('SECRET_KEY')
-    }*/
+pipeline{
 
+    agent any  
 
     parameters {
         choice(name: 'selectedbranch', choices: branches, description: 'APP-ENV-TO-DEPLOY')
@@ -48,10 +43,8 @@ pipeline {
 
     }
 
-    
 
-    stages {
-
+    stages{
         stage('pre-validation'){
             
             steps{
@@ -67,77 +60,33 @@ pipeline {
                 }
                  
             }
-        }
-
-        stage('approval for branch-deployment'){
-            steps{
-
-                script {
-                    
-                   echo "entered into script"
-                   def USER_INPUT = input(
-                    message: "Are you sure you want to deploy in ${params.selectedbranch} branch, Do you confirm?",
-                    parameters: [
-                            [$class: 'ChoiceParameterDefinition',
-                             choices: [params.selectedbranch].join('\n'),
-                             name: 'input',
-                             description: 'Menu - select box option']
-                    ])
-                
-                }
-
-                      
-            }
-        }
+        } 
 
         stage("checkout") {
             steps {
-               checkout scmGit(branches: [[name: selectedbranch]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/krishna0852/Petclinic-Terraform.git']])   
+               checkout scmGit(branches: [[name: selectedbranch]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/krishna0852/testing.git']])   
             }
         }
-        
-    //     stage("compile-java") {
-    //         steps {
-    //             sh 'javac hello.java' 
-    //             sh 'java hello.java'
-               
-    //         }
-    //     }
-    
-          stage("Terraform-init") {
 
-            steps{
-             
-                 sh 'terraform init'
-             }
-
-          }
-
-          stage("Terraform-validate") {
-
-            steps{
-                
-               sh 'terraform validate'
-            }
-
-          }
-
-          stage("Terraform-plan") {
-
-            steps{
-                
-                sh 'terraform plan'
-            }
-
-          }
-
-          stage("Approval for terraform-APPLY/ terraformDestroy") {
-            steps {
-               
-                echo 'before entering the script'
-                
-                script {
+       
+        stage("Approval"){
+             steps{
+                  script {
                     
+                   echo "entered into script"
+                   def USER_INPUT = input(
+                    message: "Are you sure you want to perform action terraform ${params.terraform} in ${params.selectedbranch} branch, Do you confirm?",
+                    submitter: "approval" // you can pass the specific jenkins user names
+
+                    )
+                  }
+            }
+         }
+
+         stage("terraform Action"){
+            steps{
+                script{
+                     
                    echo "entered into script"
                    def USER_INPUT = input(
                     message: "Are you sure you want to perform action terraform ${params.terraform} in ${params.selectedbranch} branch, Do you confirm?",
@@ -148,65 +97,76 @@ pipeline {
                              description: 'Menu - select box option']
                     ],
                     submitter: "approval" // you can pass the specific jenkins user names
+                    
+                  
 
                     )
 
-                    
-                    if ("${USER_INPUT}"=="Apply") {
+                     def yamlContent = readYaml(file: '/var/lib/jenkins/workspace/deploy/env.yaml')
+                     def branch="${params.selectedbranch}"
+                     
+                     
+                    if ("${branch}"=="dev") {
                         
                         //calling terraform apply
-                        terraformApply()
+                        account_id=yamlContent.dev.accountid
+                       // echo "${account_id}"
+                        echo "Calling method"
+                        terraformAction("${params.terraform}", "${account_id}")
+                       
+                     // sh  'terraformAction("apply", env.AWS_ACCOUNT_ID)'
                         // Add your actions here
-                    } 
-                    
-                    else if("${USER_INPUT}"=="Destroy"){
-                        //calling terraform destroy
-                        terraformDestroy()
+                        echo 'print'
                     }
-
-                    // else {
-                    //     echo "User declined the terraform ${USER_INPUT} approval"
-                    //     currentBuild.result = 'ABORTED'
-                    //     error('Pipeline aborted by user')
-                    // }
+                    
+                      else if ("${branch}"=="test") {
+                        
+                        //calling terraform apply
+                        account_id=yamlContent.test.accountid
+                       // echo "${account_id}"
+                        echo "Calling method"
+                        terraformAction("${params.terraform}", "${account_id}")
+                       
+                     // sh  'terraformAction("apply", env.AWS_ACCOUNT_ID)'
+                        // Add your actions here
+                        echo 'print'
+                    }
+                    
+                     else if ("${branch}"=="prod") {
+                        
+                        //calling terraform apply
+                        account_id=yamlContent.prod.accountid
+                       // echo "${account_id}"
+                        echo "Calling method"
+                        terraformAction("${params.terraform}", "${account_id}")
+                       
+                     // sh  'terraformAction("apply", env.AWS_ACCOUNT_ID)'
+                        // Add your actions here
+                        echo 'print'
+                    }
+                    
+                    
+                    
                 }
             }
-        }
+         }
 
 
-         
-          stage("Configuration-plan") {
 
-            steps{
-                echo "hello"
-            }
+    } // stages-end-block
+} //pipeline-end-block
 
-          }
+
+
+def terraformAction(String action, String account_id){
+    
+    act="${action}"
+    id= "${account_id}"
    
-    }
-
-
-post{
-       success{
-                echo "will execute when it's success"
-        }
-
-        failure{
-                echo "will execute when it's fail"
-        }
-  }
-
-}
-
-def terraformApply(){
-    echo "Applying terraform ...."
-    sh 'terraform apply --auto-approve'
+    echo "act terraform ...."
+    echo "terraform $act for environment $id"
     //terraform apply --auto-approve
-}
-
-def terraformDestroy(){
-    echo "Destroying terraform ...."
-
-    sh 'terraform destroy --auto-approve'
-    //terraform destroy --auto-approve
+    echo "hi, from terraformAction method"
+    sh "chmod +x infra.sh"
+    sh "./infra.sh ${id}"
 }
