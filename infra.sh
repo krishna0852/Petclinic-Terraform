@@ -2,7 +2,17 @@
 ACCOUNT_ID=$1
 echo "calling generateCreds function to generate credentials for accoount in : $ACCOUNT_ID"
 
-generateCreds $ACCOUNT_ID
+validateCmndStatus(){
+  
+  cmndsts=$1
+  description=$2
+  if [ $cmndsts -ne 0 ]; then 
+    echo  "$description failure"
+    exit 1
+  else 
+    echo "$description success"
+  fi
+}
 
 
 generateCreds(){
@@ -20,20 +30,14 @@ export AWS_SECRET_ACCESS_KEY=`cat assume-role-output.txt | jq -c '.Credentials.S
 validateCmndStatus $? "exporting secret_key" 
 export AWS_SESSION_TOKEN=`cat assume-role-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
 validateCmndStatus $? "exporting session_token" 
+
 }
 
 
-validateCmndStatus(){
-  
-  cmndsts=$1
-  description=$2
-  if [ $cmndsts -ne 0 ]; then 
-    echo  "$description failure"
-    exit 1
-  else 
-    echo "$description success"
-  fi
-}
+generateCreds $ACCOUNT_ID
+
+
+
 
 
 make $execute
