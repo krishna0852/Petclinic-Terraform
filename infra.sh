@@ -7,7 +7,11 @@ generateCreds $ACCOUNT_ID
 
 generateCreds(){
 
+
 AWS_ACCOUNT_ID=$1
+
+echo "displaying account id in generateCredes method: $AWS_ACCOUNT_ID"
+
 aws sts assume-role --role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/$AWS_ROLE" --role-session-name "terraform-practice" > assume-role-output.txt
 validateCmndStatus $? "rolecreation" 
 export AWS_ACCESS_KEY_ID=`cat assume-role-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
