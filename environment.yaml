@@ -4,7 +4,7 @@ dev:
   statefileBucket: dev-statefile
   dynamodblock: dev-dynamodb
 test:
-  accountid: 12346789
+  accountid: 56789999999999
   region:
   statefileBucket: test-statefile
   dynamodblock: test-dynamodb
