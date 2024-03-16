@@ -8,12 +8,12 @@ Validate: Init
 
 Plan: Validate
 	@echo "this is terraform plan, before plan applying terraform init and validate,"
-	terraform plan --auto-approve
+	terraform plan -auto-approve
 
 Apply: Plan
 	@echo "this is terraform apply, beofre apply applying init, validate and plan"
-	terraform apply --auto-approve
+	terraform apply -auto-approve
 
 Destroy: Plan
 	@echo "this is terraform destroy, before destroy applying validate and plan"
-	terraform destroy --auto-approve
+	terraform destroy -auto-approve
