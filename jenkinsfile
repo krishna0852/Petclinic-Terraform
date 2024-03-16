@@ -84,6 +84,11 @@ pipeline{
          }
 
          stage("terraform Action"){
+             
+             environment{
+                 
+                 execute="${params.terraform}"
+             }
             steps{
                 script{
                      
