@@ -8,7 +8,7 @@ Validate: Init
 
 Plan: Validate
 	@echo "this is terraform plan, before plan applying terraform init and validate,"
-	terraform plan -auto-approve
+	terraform plan
 
 Apply: Plan
 	@echo "this is terraform apply, beofre apply applying init, validate and plan"
