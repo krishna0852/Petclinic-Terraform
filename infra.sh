@@ -1,4 +1,6 @@
 #!/bin/bash
+
+
 ACCOUNT_ID=$1
 echo "calling generateCreds function to generate credentials for accoount in : $ACCOUNT_ID"
 
