@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ACCOUNT_ID=$1
 echo "calling generateCreds function to generate credentials for accoount in : $ACCOUNT_ID"
 
@@ -43,7 +42,7 @@ generateCreds $ACCOUNT_ID
 
 
 make $execute
-#rm -f assume-role-output.txt
+rm -f assume-role-output.txt
 
 #export TF_VAR_account_id=$AWS_ACCOUNT_ID
 

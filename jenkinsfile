@@ -1,5 +1,5 @@
 //def proUrl = 'https://krishna0852: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@github.com/krishna0852/Petclinic-Terraform.git'
-def repoName = "krishna0852/testing.git"
+def repoName = "krishna0852/Petclinic-Terraform.git"
 def protocol = "https://"
 def credentialsid= 'tokencreds'
 def proUrl = protocol +"krishna0852:" + getTokenCredentials(credentialsid) + "@github.com/" + repoName
@@ -35,6 +35,11 @@ node {
 pipeline{
 
     agent any  
+    
+    
+    environment{
+        AWS_ROLE="allow-cicd"
+    }
 
     parameters {
         choice(name: 'selectedbranch', choices: branches, description: 'APP-ENV-TO-DEPLOY')
@@ -64,7 +69,8 @@ pipeline{
 
         stage("checkout") {
             steps {
-               checkout scmGit(branches: [[name: selectedbranch]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/krishna0852/testing.git']])   
+              // checkout scmGit(branches: [[name: params.selectedbranch]], extensions: [], userRemoteConfigs: [[url: 'https://github.com/krishna0852/Petclinic-Terraform.git']])  
+              git branch: "${params.selectedbranch}", url: 'https://github.com/krishna0852/Petclinic-Terraform.git'
             }
         }
 
@@ -107,16 +113,17 @@ pipeline{
 
                     )
 
-                     def yamlContent = readYaml(file: '/var/lib/jenkins/workspace/deploy/env.yaml')
-                     def branch="${params.selectedbranch}"
+                     def yamlContent = readYaml(file: '/var/lib/jenkins/workspace/deploy/environment.yaml')
+                     //def branch="${params.selectedbranch}"
                      
                      
-                    if ("${branch}"=="dev") {
+                    if ("${params.selectedbranch}"=="dev") {
                         
                         //calling terraform apply
                         account_id=yamlContent.dev.accountid
                        // echo "${account_id}"
                         echo "Calling method"
+                        
                         terraformAction("${params.terraform}", "${account_id}")
                        
                      // sh  'terraformAction("apply", env.AWS_ACCOUNT_ID)'
@@ -124,7 +131,7 @@ pipeline{
                         echo 'print'
                     }
                     
-                      else if ("${branch}"=="test") {
+                      else if ("${params.selectedbranch}"=="test") {
                         
                         //calling terraform apply
                         account_id=yamlContent.test.accountid
@@ -137,7 +144,7 @@ pipeline{
                         echo 'print'
                     }
                     
-                     else if ("${branch}"=="prod") {
+                     else if ("${params.selectedbranch}"=="prod") {
                         
                         //calling terraform apply
                         account_id=yamlContent.prod.accountid
@@ -168,7 +175,7 @@ def terraformAction(String action, String account_id){
     act="${action}"
     id= "${account_id}"
    
-    echo "act terraform ...."
+    echo "$act terraform ...."
     echo "terraform $act for environment $id"
     //terraform apply --auto-approve
     echo "hi, from terraformAction method"
