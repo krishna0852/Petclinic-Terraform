@@ -1,5 +1,5 @@
 dev:
-  accountid: 851725358716
+  accountid: 730335449261
   region:
   statefileBucket: dev-statefile
   dynamodblock: dev-dynamodb

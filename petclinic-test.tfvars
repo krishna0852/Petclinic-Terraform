@@ -5,7 +5,7 @@ pblcsbnt-config = {
     cidr_block        = "10.9.0.0/26"
     name              = "pblc-A"
   }
-
+}
 prvtsbnt-config = {
   prvt-a = {
     availability_zone = "ap-southeast-2b"
