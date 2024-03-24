@@ -36,8 +36,8 @@ resource "aws_lb_listener" "listen80" {
 
 resource "aws_lb_target_group" "target-group" {
   name     = "tf-example-lb-tg"
-  port     = 80
-  protocol = "HTTP"
+  port     = 8080
+  protocol = "TCP"
   target_type ="ip"
   vpc_id   = var.vpc-id
 }
