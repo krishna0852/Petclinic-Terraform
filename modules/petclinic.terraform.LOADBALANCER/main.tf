@@ -36,15 +36,15 @@ resource "aws_lb_listener" "listen80" {
 
 resource "aws_lb_target_group" "target-group" {
   name     = "tf-example-lb-tg"
-  port     = 8080
+  port     = 80
   protocol = "HTTP"
   target_type ="ip"
   vpc_id   = var.vpc-id
 }
 
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-}
+# resource "aws_vpc" "main" {
+#   cidr_block = "10.0.0.0/16"
+# }
  
 data "aws_subnets" "getallsubnets"{
   filter {

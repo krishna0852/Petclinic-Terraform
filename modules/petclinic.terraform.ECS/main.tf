@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "container-definition" {
       portMappings = [
         {
           protocol="tcp"
-          containerPort = 8080
+          containerPort = 80
           hostPort      = 8080
         }
       ]
@@ -78,7 +78,7 @@ resource "aws_ecs_service" "service" {
   load_balancer {
     target_group_arn = var.tgroup_arn
     container_name   = "nginx"
-    container_port   = 8080
+    container_port   = 80
   }
   
 }
