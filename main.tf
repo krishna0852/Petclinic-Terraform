@@ -59,7 +59,7 @@ module "ECS" {
 
 module "ECR" {
   source="./modules/petclinic.terraform.ECR"
-  ecr-name = ["repo"]
+  ecr-name = "repo"
 
   tags={
     "environment" ="dev"

@@ -1,7 +1,7 @@
 resource "aws_ecr_repository" "foo" {
 
-  for_each = toset(var.ecr-name)
-  name                 = each.key
+  //for_each = toset(var.ecr-name)
+  name                 = var.ecr-name
   image_tag_mutability = var.image_tag
 
   image_scanning_configuration {
