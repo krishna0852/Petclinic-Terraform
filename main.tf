@@ -52,7 +52,8 @@ module "ECS" {
     sgid = module.subnet.security-id
     vpc-id = module.vpc.getvpc-id
     tgroup_arn = module.alb.tgroup_arn
-    depends_on = [ module.vpc, module.subnet, module.IAM, module.alb] # don't change this line
+    repo_url = module.ECR.repo-url
+    depends_on = [ module.vpc, module.subnet, module.IAM, module.alb, module.ECR] # don't change this line
 }
 
 

@@ -31,8 +31,8 @@ resource "aws_ecs_task_definition" "container-definition" {
   
   container_definitions = jsonencode([
     {
-      name      = "nginx"
-      image     = "nginx"
+      name      = "petapp"
+      image     = var.repo_url
       cpu       = 10
       memory    = 512
       essential = true
