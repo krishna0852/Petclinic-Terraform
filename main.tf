@@ -32,7 +32,7 @@ prvtsbnt-config = {
 module "alb" {
   source = "./modules/petclinic.terraform.LOADBALANCER"
   lb-name = "petclinic-lb"
-  lb-type = "application"
+  lb-type = "network"
   vpc-id = module.vpc.getvpc-id
   sgid = module.subnet.security-id
   depends_on = [ module.vpc, module.subnet ]
