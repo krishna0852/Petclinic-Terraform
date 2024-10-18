@@ -45,3 +45,8 @@ variable "tgroup_arn" {
   type=string 
   description = "target-group"
 }
+
+variable "repo_url" {
+  type=string 
+  description="pass-repo-url"
+}

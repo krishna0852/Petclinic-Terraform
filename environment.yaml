@@ -1,10 +1,10 @@
 dev:
-  accountid: iu
+  accountid: 730335449261
   region:
   statefileBucket: dev-statefile
   dynamodblock: dev-dynamodb
 test:
-  accountid: 12346789
+  accountid: 567899999999999
   region:
   statefileBucket: test-statefile
   dynamodblock: test-dynamodb

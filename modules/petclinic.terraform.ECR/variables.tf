@@ -1,6 +1,6 @@
 variable "ecr-name" {
   #type= any
-  type= list
+  type= string
   description="repository-name" 
 }
 

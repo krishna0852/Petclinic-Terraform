@@ -32,7 +32,7 @@ prvtsbnt-config = {
 module "alb" {
   source = "./modules/petclinic.terraform.LOADBALANCER"
   lb-name = "petclinic-lb"
-  lb-type = "application"
+  lb-type = "network"
   vpc-id = module.vpc.getvpc-id
   sgid = module.subnet.security-id
   depends_on = [ module.vpc, module.subnet ]
@@ -52,13 +52,14 @@ module "ECS" {
     sgid = module.subnet.security-id
     vpc-id = module.vpc.getvpc-id
     tgroup_arn = module.alb.tgroup_arn
-    depends_on = [ module.vpc, module.subnet, module.IAM, module.alb] # don't change this line
+    repo_url = module.ECR.repo-url
+    depends_on = [ module.vpc, module.subnet, module.IAM, module.alb, module.ECR] # don't change this line
 }
 
 
 module "ECR" {
   source="./modules/petclinic.terraform.ECR"
-  ecr-name = ["repo"]
+  ecr-name = "repo"
 
   tags={
     "environment" ="dev"

@@ -32,15 +32,15 @@ resource "aws_ecs_task_definition" "container-definition" {
   container_definitions = jsonencode([
     {
       name      = "nginx"
-      image     = "nginx"
+      image     = var.repo_url
       cpu       = 10
       memory    = 512
       essential = true
       portMappings = [
         {
           protocol="tcp"
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 8080
+          hostPort      = 8080
         }
       ]
     }
@@ -78,7 +78,7 @@ resource "aws_ecs_service" "service" {
   load_balancer {
     target_group_arn = var.tgroup_arn
     container_name   = "nginx"
-    container_port   = 80
+    container_port   = 8080
   }
   
 }
